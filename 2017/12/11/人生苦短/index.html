@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>屠夫(杜昆淇)的博客</title>
+  <meta name="description" content>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>杜昆淇的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+            <a href="http://www.butcherhelp.cn" class="item-link">屠夫新闻</a>
+        </li>
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+      <section class="content markdown-body">
+        <h1>
+          人生苦短
+        </h1>
+        <div class='post-meta'>
+          <i class="fa fa-calendar"
+            aria-hidden="true"></i> <time>
+            2017/12/11</time>
+          
+          
+        </div>
+        <p>时光流逝，岁月如梭。时间和机遇对每个人来说应该是公平的，不应该把时光机遇理解为对自己的折磨，而应该是自己对未来充满信心的证明和安慰。忘了自己才能成就自己，自己想得太多、对一切事情斤斤计较，就可能废掉自己的前程，糊涂冲动而懊悔一生。</p>
+<p>人生短短几十年，不要给自己留下了什么遗憾，想笑就笑，想哭就哭，该爱的时候就去爱，无谓压抑自己。人生的苦闷有二，一是欲望没有被满足，二是它得到了满足。</p>
+<p>人的一生中，总有太多的惦念，不舍与真情。即使我们不甘，却又不得不去面对，平静的面对成功，坦然的面对挫折，豁达的面对属于自己的人生。</p>
+<p>人生的路，说长不长，说短不短，每段路有每段路的风景和担当。一路上会有风和日丽，也会有雨雪风霜；会有艰难险阻，也会有一马平川。有人相伴也罢，一人独行也罢，人这一辈子，总有些事情需要你去面对，总有些无奈需要你去承受，无论怎样，都要守住自己的心。人生无常，心安即是归处。</p>
+<p>昨天已经过去，明天还未到来。只有今天是一份礼物。走过、路过、千万不要错过；爱过、恨过、千万不要记过；痛过、追悔过、一定从头来过。一天一年，感觉时光似箭；一生一世，人就这么一次。腾不出时间学习的人，迟早会腾出时间来伤悲；腾不出时间思考的人，迟早会腾出时间来后悔。</p>
+<p>人生看不惯的东西太多，看清、看懂，全是自找伤心。凡事太认真，苦了心，累了自己。不论人还是命运，谁想要你难看，你就要还他笑脸。这个世界上，谁也不是谁的永远，每个人都是幸福的。只是，你的幸福，常常在别人眼里。</p>
+<p>人这辈子，有人羡慕你，有人讨厌你，有人嫉妒你，有人看不起你，没关系，他们都是外人，生活就是这样，你所做的一切不能让每个人都满意。不要为了讨好别人而丟失自己的本性，因为每个人都有原则，别人嘴里的你，不是真实的你。</p>
+<p>人生短暂，生活有时不需要那么辛苦，劳碌一生回头望望或许才知平凡的价值，简简单单过一段平凡的生活，多看看人生路途中的景，如此不是很好么?</p>
+
+      </section>
+    </article>
+    
+    
+  </div>
+  <aside>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy;
+      2019&nbsp
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/ScrollMagic.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  document.body.addEventListener('touchstart', function () { });
+
+  // 文章图片预览
+  $("article img").each(function () {
+    var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+    $(this).wrapAll(strA);
+  });
+
+  // 目录联动
+  let tocLinkList = $('.toc-link')
+
+  let controller = new ScrollMagic.Controller({
+    globalSceneOptions: {
+      triggerHook: 0.01
+    }
+  })
+
+  tocLinkList.each(function (index, elem) {
+    let href = $(this).attr("href");
+    let nextHref = tocLinkList.eq(index + 1).attr("href");
+    let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+    new ScrollMagic.Scene({ triggerElement: href })
+      .duration(height)
+      .setClassToggle(".toc [href='" + href + "']", 'active')
+      .addTo(controller)
+  })
+
+  window.addEventListener('load', function () {
+    // 目录联动 图片加载完成后从新计算
+    tocLinkList.each(function (index, elem) {
+      let href = $(this).attr("href");
+      let nextHref = tocLinkList.eq(index + 1).attr("href");
+      let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+      new ScrollMagic.Scene({ triggerElement: href })
+        .duration(height)
+        .setClassToggle(".toc [href='" + href + "']", 'active')
+        .addTo(controller)
+    })
+  })
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

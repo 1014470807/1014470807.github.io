@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>屠夫(杜昆淇)的博客</title>
+  <meta name="description" content>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>杜昆淇的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+            <a href="http://www.butcherhelp.cn" class="item-link">屠夫新闻</a>
+        </li>
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+      <section class="content markdown-body">
+        <h1>
+          flutter分享微信支付等操作
+        </h1>
+        <div class='post-meta'>
+          <i class="fa fa-calendar"
+            aria-hidden="true"></i> <time>
+            2019/08/11</time>
+          
+          
+        </div>
+        <p>首先抱怨一下sharesdk这个三方，上个kottlin版的项目是使用sharesdk的，然后本想着flutter版也要sharesdk的，结果到集成的时候，各种调用不起来，把flutter版的demo跑了起来也是出现调用不起来的情况，测试手机：华为7，荣耀还是唱响？，我的P10也是不行，后面因为急着上线iOS就耽搁了一个礼拜。</p>
+<p>今天又抽空把微信登录做了一遍，算了还是用原生的写，索性的用了网上的fluwx，感觉还可以，还集成了微信支付在里面。</p>
+<p>直接上步骤：<br>项目地址：</p>
+<p><a href="https://github.com/OpenFlutter/fluwx" target="_blank" rel="noopener">https://github.com/OpenFlutter/fluwx</a></p>
+<p>直接在<a href="https://pub.dev/上搜索：fluwx" target="_blank" rel="noopener">https://pub.dev/上搜索：fluwx</a></p>
+<p>配置：<br>在flutter中的yaml文件中进行配置：</p>
+<p>  fluwx: ^1.0.4<br>1<br>初始化：<br>在main.dart中进行初始化操作，尽可能早的初始化</p>
+<pre><code>await fluwx.register(
+    appId: &quot;wxxxxxxxxxxxxx&quot;,
+    doOnAndroid: true,
+    doOnIOS: true,
+    enableMTA: false);
+var result = await fluwx.isWeChatInstalled();</code></pre><p>1<br>2<br>3<br>4<br>5<br>6<br>记得填写你的appId<br>登录页进行<br>例如在login.dart中</p>
+<p>  String _result = “无”;</p>
+<p>  @override<br>  void initState() {<br>    super.initState();<br>    fluwx.responseFromAuth.listen((data) {<br>      if (mounted) {<br>      }<br>      // 这里返回结果，errCode=1为微信用户授权成功的标志，其他看微信官方开发文档<br>      setState(() {<br>        _result = “initState ======   ${data.errCode}  — ${data.code}”;<br>        int errCode = data.errCode;<br>        if (errCode == Constant.WECHAT_SUCCESS) {<br>          String code = data.code;<br>          print(‘code  $code’);<br>          getWeChatAccessToken(code);<br>        }else {<br>          Util.showToast(“${data.code}”);<br>        }<br>        print(‘aaaa ====== &gt;   $_result’);<br>      });<br>    });<br>  }</p>
+<p>  @override<br>  void dispose() {<br>    super.dispose();<br>    _result = null;<br>  }</p>
+<p>// 某个按钮触发的操作<br>  void _weChatLogin(){<br>    fluwx.sendAuth(<br>        scope: “snsapi_userinfo”, state: “wechat_sdk_demo_test”)<br>        .then((data) {<br>          setState(() {<br>          });<br>    }).catchError((e){print(‘weChatLogin  e  $e’);});<br>  }</p>
+<p>到这里我们就已经将微信登录的操作完成了，这里我们只获取到微信登录里的code，我们可以通过这个code去请求access_token和open_id，再通过access_token获取到微信用户信息等。</p>
+
+      </section>
+    </article>
+    
+    
+  </div>
+  <aside>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy;
+      2019&nbsp
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/ScrollMagic.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  document.body.addEventListener('touchstart', function () { });
+
+  // 文章图片预览
+  $("article img").each(function () {
+    var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+    $(this).wrapAll(strA);
+  });
+
+  // 目录联动
+  let tocLinkList = $('.toc-link')
+
+  let controller = new ScrollMagic.Controller({
+    globalSceneOptions: {
+      triggerHook: 0.01
+    }
+  })
+
+  tocLinkList.each(function (index, elem) {
+    let href = $(this).attr("href");
+    let nextHref = tocLinkList.eq(index + 1).attr("href");
+    let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+    new ScrollMagic.Scene({ triggerElement: href })
+      .duration(height)
+      .setClassToggle(".toc [href='" + href + "']", 'active')
+      .addTo(controller)
+  })
+
+  window.addEventListener('load', function () {
+    // 目录联动 图片加载完成后从新计算
+    tocLinkList.each(function (index, elem) {
+      let href = $(this).attr("href");
+      let nextHref = tocLinkList.eq(index + 1).attr("href");
+      let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+      new ScrollMagic.Scene({ triggerElement: href })
+        .duration(height)
+        .setClassToggle(".toc [href='" + href + "']", 'active')
+        .addTo(controller)
+    })
+  })
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

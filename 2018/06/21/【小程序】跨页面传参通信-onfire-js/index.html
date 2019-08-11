@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>屠夫(杜昆淇)的博客</title>
+  <meta name="description" content>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>杜昆淇的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+            <a href="http://www.butcherhelp.cn" class="item-link">屠夫新闻</a>
+        </li>
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+      <section class="content markdown-body">
+        <h1>
+          【小程序】跨页面传参通信 onfire.js
+        </h1>
+        <div class='post-meta'>
+          <i class="fa fa-calendar"
+            aria-hidden="true"></i> <time>
+            2018/06/21</time>
+          
+          
+        </div>
+        <p>在小程序开发过程中，难免会遇到一种情况，当A页面需要用户设置数据 点击进入B页面，在B页面设置成功后返回并将设置的值传递给A页面。但是wx.navigateBack()并不支持返回传参。这种情况下就可以使用onfire.js，onfire.js 是一个很简单的事件分发的 Javascript 库（仅仅 0.9kb），简洁实用。<br>onfire.js下载地址</p>
+<p>将onfire.js下载下来并放置在开发项目某个目录下，例如根目录lib文件夹内。<br>在使用页面对应的js文件中引入该文件。</p>
+<p>代码如下：<br>A页面</p>
+<!--index.wxml-->
+<view class="order">
+  <view class="order-alert">设置您的联系方式</view>
+  <view class="order-mobile" bindtap="setMobile">
+      <view class="order-mobile__caption">联系方式</view>
+      <view class="order-mobile__content">
+          <text class="valign-mid"></text>
+          <text class="iconfont order-mobile__content__more"></text>
+      </view>
+  </view>
+</view>
+
+<p>//index.js<br>const onfire = require(‘../../lib/onfire.js’)</p>
+<p>Page({<br>  data: {<br>    mobile: ‘’<br>  },</p>
+<p>  onLoad: function () {<br>    // 绑定事件，当名为EventPhoneChange的事件发生的时<br>    onfire.on(‘EventPhoneChange’, e =&gt; {<br>      this.setData({<br>        mobile: e<br>      })<br>    })<br>  },<br>  // 设置手机号<br>  setMobile: function () {<br>    wx.navigateTo({<br>      url: ‘../phone/phone?mobile=’ + this.data.mobile,<br>    })<br>  },<br>  onUnload: function () {<br>    // 取消事件绑定<br>    onfire.un(“EventPhoneChange”);<br>  }<br>})</p>
+<p>B页面</p>
+<!--phone.wxml-->
+<view class="phone">
+    <input class="phone-input" placeholder="手机号码" bindinput="bindinput" value>
+
+<pre><code>&lt;button class=&quot;phone-setting&quot; bindtap=&quot;tapSetting&quot;&gt;设置&lt;/button&gt;</code></pre></view>
+
+
+<p>// phone.js</p>
+<p>const onfire = require(‘../../lib/onfire.js’)</p>
+<p>Page({</p>
+<p>  data: {<br>    mobile: ‘’<br>  },<br>  onLoad: function (e) {<br>    this.setData({<br>      mobile: e.mobile<br>    })<br>  },<br>  tapSetting: function () {<br>    let mobile = this.data.mobile;<br>    if (!mobile) {<br>      wx.showToast({<br>        title: ‘请填写手机号！’,<br>        icon: ‘none’,<br>        duration: 2000,<br>      })<br>      return;<br>    }<br>    // 触发名为EventPhoneChange的事件，并且携带变量mobile值。<br>    onfire.fire(‘EventPhoneChange’, mobile)<br>    wx.navigateBack()<br>  },</p>
+<p>  bindinput: function (e) {<br>    this.setData({<br>      mobile: e.detail.value.trim()<br>    })<br>  }<br>})</p>
+<p>其效果图如下：</p>
+<p>实际效果</p>
+<p>关于onfire.js的API<br>1.on(event_name, callback) 绑定事件，参数为event_name和callback， 当有名字为event_name的事件发生的时候，callback方法将会被执行。这个方法会返回一个eventObj，这个可以用于使用un(eventObj)方法来取消事件绑定。<br>2.one(event_name, callback) 绑定（订阅）事件，参数为 event_name with callback. 当被触发一次之后失效。只能被触发一次，一次之后自动失效。<br>3.fire(event_name, data) 触发名字为event_name的事件，并且赋予变量data为callback方法的输入值。<br>4.un(eventObj / eventName / function)取消事件绑定。可以仅仅取消绑定一个事件回调方法，也可以直接取消全部的事件；<br>5.clear() 清空所有事件。</p>
+
+      </section>
+    </article>
+    
+    
+  </div>
+  <aside>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy;
+      2019&nbsp
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/ScrollMagic.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  document.body.addEventListener('touchstart', function () { });
+
+  // 文章图片预览
+  $("article img").each(function () {
+    var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+    $(this).wrapAll(strA);
+  });
+
+  // 目录联动
+  let tocLinkList = $('.toc-link')
+
+  let controller = new ScrollMagic.Controller({
+    globalSceneOptions: {
+      triggerHook: 0.01
+    }
+  })
+
+  tocLinkList.each(function (index, elem) {
+    let href = $(this).attr("href");
+    let nextHref = tocLinkList.eq(index + 1).attr("href");
+    let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+    new ScrollMagic.Scene({ triggerElement: href })
+      .duration(height)
+      .setClassToggle(".toc [href='" + href + "']", 'active')
+      .addTo(controller)
+  })
+
+  window.addEventListener('load', function () {
+    // 目录联动 图片加载完成后从新计算
+    tocLinkList.each(function (index, elem) {
+      let href = $(this).attr("href");
+      let nextHref = tocLinkList.eq(index + 1).attr("href");
+      let height = href && nextHref ? $(nextHref).offset().top - $(href).offset().top : 0
+
+      new ScrollMagic.Scene({ triggerElement: href })
+        .duration(height)
+        .setClassToggle(".toc [href='" + href + "']", 'active')
+        .addTo(controller)
+    })
+  })
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
